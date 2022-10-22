@@ -35,7 +35,7 @@ class ComicController extends Controller
      */
     public function clone()
     {
-        set_time_limit(6000);
+        set_time_limit(0);
 
         $client = new Client();
         $comics = Temp::query()

@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Storage;
 
 
 Route::get('/', function () {
-    set_time_limit(6000);
 
 //    $client = new Client();
     (new ComicController())->clone();
