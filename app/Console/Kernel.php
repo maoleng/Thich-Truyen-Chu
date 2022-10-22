@@ -7,18 +7,19 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
+    protected $commands = [
+        Commands\CloneComic::class,
+    ];
     /**
      * Define the application's command schedule.
      *
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
-    protected $commands = [
-        Commands\CloneComic::class,
-    ];
+
     protected function schedule(Schedule $schedule)
     {
-         $schedule->command('comic:clone')->cron('35 11 * * *');
+         $schedule->command('comic:clone')->cron('40 13 * * *');
     }
 
     /**

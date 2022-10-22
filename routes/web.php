@@ -24,10 +24,15 @@ Route::get('/', function () {
 });
 
 Route::get('/d', function () {
-    $a = Storage::disk('s3')->allFiles();
-    foreach ($a as $file) {
-        Storage::disk('s3')->delete($file);
+    $s3_paths = Storage::disk('s3')->directories('Comics');
+    $db_paths = Comic::query()->get()->pluck('id')->map(static function ($id) {
+        return 'Comics/'.$id;
+    })->toArray();
+    $diffs = array_diff($s3_paths, $db_paths);
+
+    foreach ($diffs as $diff) {
+        Storage::disk('s3')->deleteDirectory($diff);
     }
-    dd(Storage::disk('s3')->allFiles());
+    dd('These are deleted:', $diffs);
 
 });
