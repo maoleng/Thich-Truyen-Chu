@@ -11,6 +11,6 @@ class Temp extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'link', 'banner', 'count', 'status',
+        'link', 'banner', 'count', 'status', 'message'
     ];
 }

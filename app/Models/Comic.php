@@ -19,4 +19,20 @@ class Comic extends Base
     {
         return $this->belongsToMany(Type::class, 'comic_types', 'comic_id', 'type_id');
     }
+
+    public function author()
+    {
+        return $this->belongsTo(Author::class, 'author_id', 'id');
+    }
+
+    public function thumbnail()
+    {
+        return $this->belongsTo(Image::class, 'thumbnail_id', 'id');
+    }
+
+    public function banner()
+    {
+        return $this->belongsTo(Image::class, 'banner_id', 'id');
+    }
+
 }
