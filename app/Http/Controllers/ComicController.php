@@ -48,7 +48,7 @@ class ComicController extends Controller
             try {
                 $comic_info = $this->getComicInfo($content);
                 if (empty($comic_info)) {
-                    $comic_data->update(['status' => 1]);
+                    $comic_data->update(['status' => 404]);
                     continue;
                 }
                 DB::beginTransaction();
