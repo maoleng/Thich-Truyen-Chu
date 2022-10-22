@@ -56,7 +56,11 @@ class ComicController extends Controller
                 DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
-                dd($e, $comic_data);
+                $comic_data->update([
+                    'status' => -1
+                ]);
+                DB::commit();
+                continue;
             }
 
         }
