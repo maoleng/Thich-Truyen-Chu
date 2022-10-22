@@ -45,24 +45,30 @@ class ComicController extends Controller
             ->get();
         foreach($comics as $comic_data) {
             $content = $client->request('GET', $comic_data['link'])->getBody()->getContents();
-            $comic_info = $this->getComicInfo($content);
-            DB::beginTransaction();
             try {
+                $comic_info = $this->getComicInfo($content);
+                if (empty($comic_info)) {
+                    $comic_data->update(['status' => 1]);
+                    continue;
+                }
+                DB::beginTransaction();
                 $comic = $this->createComic($comic_info, $comic_data);
                 $this->createChapter($comic_info, $comic_data, $comic, $client);
                 $comic_data->update([
                     'status' => 1,
                 ]);
+
                 DB::commit();
             } catch (Exception $e) {
+                $message = $e->getMessage().' at line: '.$e->getLine().', at file: '.$e->getFile();
                 DB::rollBack();
                 $comic_data->update([
-                    'status' => -1
+                    'status' => -1,
+                    'message' => $message,
                 ]);
                 DB::commit();
                 continue;
             }
-
         }
 
     }
@@ -169,9 +175,12 @@ class ComicController extends Controller
         return $comic;
     }
 
-    private function getComicInfo($content)
+    private function getComicInfo($content): ?array
     {
         preg_match('/<h3 class="title" itemprop="name">.+</Us', $content, $match);
+        if (empty($match[0])) {
+            return null;
+        }
         $comic_name = substr(substr($match[0],34), 0, -1);
         preg_match('/<div class="desc-text desc-text-full" itemprop="description">.+<\/di/sU', $content, $match);
         if (empty($match[0])) {
