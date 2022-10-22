@@ -40,8 +40,8 @@ class ComicController extends Controller
         $client = new Client();
         $comics = Temp::query()
             ->where('status', 0)
-            ->orderBy('id', 'DESC')
-            ->limit(10)
+//            ->orderBy('id', 'DESC')
+            ->limit(200)
             ->get();
         foreach($comics as $comic_data) {
             $content = $client->request('GET', $comic_data['link'])->getBody()->getContents();
