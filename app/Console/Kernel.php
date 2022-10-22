@@ -13,6 +13,9 @@ class Kernel extends ConsoleKernel
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
+    protected $commands = [
+        Commands\CloneComic::class,
+    ];
     protected function schedule(Schedule $schedule)
     {
          $schedule->command('comic:clone')->cron('35 11 * * *');
