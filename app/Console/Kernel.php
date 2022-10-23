@@ -19,7 +19,7 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
-         $schedule->command('comic:clone')->cron('25 16 * * *');
+         $schedule->command('comic:clone')->cron('23 10 * * *');
     }
 
     /**
