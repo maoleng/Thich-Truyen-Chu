@@ -22,27 +22,3 @@ Route::get('/', function () {
 
 
 });
-
-Route::get('/d', function () {
-    set_time_limit(0);
-
-    $s3_paths = Storage::disk('s3')->directories('Comics');
-    $db_paths = Comic::query()->get()->pluck('id')->map(static function ($id) {
-        return 'Comics/'.$id;
-    })->toArray();
-    $diffs = array_diff($db_paths, $s3_paths);
-    foreach ($diffs as $diff) {
-        Storage::disk('s3')->deleteDirectory($diff);
-    }
-    dd('These are deleted:', $diffs);
-
-});
-Route::get('/dc', function () {
-    $comic = Comic::query()->where('id', '6c38cd0a-e1bc-4adc-ad1d-8167f856bbee')
-        ->first();
-    $comic->author->delete();
-    $comic->thumbnail->delete();
-    $comic->banner->delete();
-    $comic->delete();
-
-});
