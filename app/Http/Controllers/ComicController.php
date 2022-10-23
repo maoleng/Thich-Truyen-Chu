@@ -44,8 +44,8 @@ class ComicController extends Controller
             ->limit(1000)
             ->get();
         foreach($comics as $comic_data) {
-            $content = $client->request('GET', $comic_data['link'])->getBody()->getContents();
             try {
+                $content = $client->request('GET', $comic_data['link'])->getBody()->getContents();
                 $comic_info = $this->getComicInfo($content);
                 if (empty($comic_info)) {
                     $comic_data->update(['status' => 404]);
@@ -88,8 +88,12 @@ class ComicController extends Controller
                 preg_match('/Chương <\/span><\/span>.+<\/a/Usu', $content, $match);
                 $name = substr(str_replace('</span></span>', '', $match[0]), 0, -3);
                 preg_match('/<div class=\"visible-md visible-lg ads-responsive incontent-ad\" id=\"ads-chapter-pc-top\" align=\"center\" style=\"height:90px\"><\/div>.*<\/div>/Us', $content, $matches);
-                preg_match('/v>.*</s', $matches[0], $matches);
-                $chap_content = substr(substr($matches[0], 2), 0, -1);
+                if (isset($matches[0])) {
+                    preg_match('/v>.*</s', $matches[0], $matches);
+                    $chap_content = substr(substr($matches[0], 2), 0, -1);
+                } else {
+                    $chap_content = 'Không tồn tại chương này';
+                }
                 $content_url = 'Comics/'.$comic->id.'/chap-'.$chapter.'.txt';
                 Storage::disk('s3')->put($content_url, $chap_content);
 
