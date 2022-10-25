@@ -41,7 +41,7 @@ class ComicController extends Controller
         $comics = Temp::query()
             ->where('status', 0)
 //            ->orderBy('id', 'DESC')
-            ->limit(5000)
+            ->limit(1000)
             ->get();
         foreach($comics as $comic_data) {
             try {
