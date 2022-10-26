@@ -166,7 +166,8 @@ class ComicController extends Controller
                     'name' => $type_name,
                 ],
             );
-            $type_ids[] = $type->id->toString();
+
+            $type_ids[] = is_string($type->id) ? $type->id : $type->id->toString();
         }
 
         $comic = Comic::query()->firstOrCreate(
