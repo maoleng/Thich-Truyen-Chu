@@ -12,4 +12,9 @@ class Author extends Base
     protected $fillable = [
         'name'
     ];
+
+    public function comics()
+    {
+        return $this->hasMany(Comic::class, 'author_id', 'id');
+    }
 }

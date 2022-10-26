@@ -35,4 +35,9 @@ class Comic extends Base
         return $this->belongsTo(Image::class, 'banner_id', 'id');
     }
 
+    public function chapters()
+    {
+        return $this->hasMany(Chapter::class, 'comic_id', 'id');
+    }
+
 }
