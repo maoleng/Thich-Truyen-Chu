@@ -148,14 +148,24 @@ class ComicController extends Controller
             'source' => $this->handleImage($comic_info['banner_url'], 'banner'),
             'size' => random_int(0,1000),
         ]);
-        $author = Author::query()->create([
-            'name' => $comic_info['author'],
-        ]);
+        $author = Author::query()->firstOrCreate(
+            [
+                'name' => $comic_info['author'],
+            ],
+            [
+                'name' => $comic_info['author'],
+            ]
+        );
         $type_ids = [];
         foreach($comic_info['type_names'] as $type_name) {
-            $type = Type::query()->create([
-                'name' => $type_name,
-            ]);
+            $type = Type::query()->firstOrCreate(
+                [
+                    'name' => $type_name,
+                ],
+                [
+                    'name' => $type_name,
+                ],
+            );
             $type_ids[] = $type->id->toString();
         }
 
