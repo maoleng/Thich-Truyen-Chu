@@ -82,8 +82,11 @@ class ComicController extends Controller
             preg_match_all($regex_link, $content, $matches);
             $chaps = $matches[0];
             foreach ($chaps as $chap) {
-                preg_match('/\/chuong.*\d/', $chap, $match);
-                $chapter = substr($match[0], 8);
+                preg_match('/\.vn.*\/chuong.*\d/', $chap, $match);
+                if (empty($match[0])) {
+                    continue;
+                }
+                $chapter = substr(explode('/', $match[0])[2], 7);
                 $content = $client->request('GET', $chap)->getBody()->getContents();
                 preg_match('/Chương <\/span><\/span>.+<\/a/Usu', $content, $match);
                 $name = substr(str_replace('</span></span>', '', $match[0]), 0, -3);
@@ -204,8 +207,12 @@ class ComicController extends Controller
         }
         $description = substr(substr($match[0], $offset ?? 61), 0, -4);
         preg_match('/<a itemprop="author".+</U', $content, $match);
-        preg_match('/title=".+"/', $match[0], $match);
-        $author = substr(substr($match[0], 7), 0, -1);
+        if (empty($match[0])) {
+            $author = '';
+        } else {
+            preg_match('/title=".+"/', $match[0], $match);
+            $author = substr(substr($match[0], 7), 0, -1);
+        }
         preg_match('/h3>Thể loại:.+div>/Uu', $content, $match);
         preg_match_all('/title=".+"/U', $match[0], $matches);
         $type_names = array_map(static function ($type) {
@@ -214,8 +221,8 @@ class ComicController extends Controller
         preg_match('/text-[A-Za-z]+">.+</Us', $content, $match);
         $status = substr(substr($match[0], 14), 0, -1);
         $status = $status === 'Đang ra' ? 0 : 1;
-        preg_match('/<div class="book"><img src=.+jpg/U', $content, $match);
-        $banner_url = substr($match[0], 28);
+        preg_match('/<div class="book"><img src=.+"/U', $content, $match);
+        $banner_url = substr(substr($match[0], 28), 0, -1);
         preg_match('/<input id="truyen-id" type="hidden" value="\d+">/', $content, $match);
         preg_match('/\d+/', $match[0], $match);
         $comic_id = $match[0];
@@ -241,6 +248,9 @@ class ComicController extends Controller
             $image_data = file_get_contents($url);
         } else {
             file_put_contents('example.jpg', file_get_contents($url));
+            if (! @is_array(getimagesize('example.jpg'))) {
+                return 'https://www.studytienganh.vn/upload/2021/05/98140.png';
+            }
             $im = imagecreatefromjpeg('example.jpg');
             $width = imagesx($im);
             $height = imagesy($im);
